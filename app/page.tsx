@@ -127,7 +127,7 @@ export default function Home() {
         <Logos />
       </section>
 
-      <Footer />
+      {/* <Footer /> */}
 
       <Particles
         quantityDesktop={350}

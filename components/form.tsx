@@ -33,7 +33,7 @@ export default function Form({
       <motion.div variants={itemVariants}>
         <Input
           type="text"
-          placeholder="Your Name"
+          placeholder="Name"
           value={name}
           onChange={handleNameChange}
         />
@@ -41,7 +41,7 @@ export default function Form({
       <motion.div variants={itemVariants}>
         <Input
           type="email"
-          placeholder="Your Email Address"
+          placeholder="you@company.com"
           value={email}
           onChange={handleEmailChange}
         />
@@ -60,8 +60,8 @@ export default function Form({
       <motion.div
         variants={itemVariants}
         className="mt-4 flex w-full items-center justify-center gap-1 text-muted-foreground">
-        <p>For any queries, reach out at </p>
-        <Link
+        <p>Private beta · April 2026 </p>
+        {/* <Link
           href="https://x.com/blakssh"
           rel="noopener noreferrer"
           target="_blank">
@@ -73,7 +73,7 @@ export default function Form({
           rel="noopener noreferrer"
           target="_blank">
           <FaGithub className="ml-0.5 h-5 w-5 transition-all duration-200 ease-linear hover:text-yellow-200" />
-        </Link>
+        </Link> */}
       </motion.div>
     </motion.div>
   );
