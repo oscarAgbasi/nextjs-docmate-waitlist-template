@@ -30,7 +30,7 @@ export default function Form({
       variants={containerVariants}
       initial="hidden"
       animate="visible">
-      <motion.div variants={itemVariants}>
+      {/* <motion.div variants={itemVariants}>
         <Input
           type="text"
           placeholder="Name"
@@ -45,7 +45,7 @@ export default function Form({
           value={email}
           onChange={handleEmailChange}
         />
-      </motion.div>
+      </motion.div> */}
       <motion.div variants={itemVariants}>
         <EnhancedButton
           variant="expandIcon"
