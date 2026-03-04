@@ -2,17 +2,20 @@
 
 import { toast } from "sonner";
 import { useState } from "react";
+import { FaArrowRightLong } from "react-icons/fa6";
 import CTA from "@/components/cta";
 import Form from "@/components/form";
 import Logos from "@/components/logos";
 import Particles from "@/components/ui/particles";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
+import { EnhancedButton } from "@/components/ui/enhanced-btn";
 
 export default function Home() {
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
@@ -40,29 +43,9 @@ export default function Home() {
 
     setLoading(true);
 
-    const promise = new Promise(async (resolve, reject) => {
+    const promise = new Promise<unknown>(async (resolve, reject) => {
       try {
-        // First, attempt to send the email
-        const mailResponse = await fetch("/api/mail", {
-          cache: "no-store",
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ firstname: name, email }),
-        });
-
-        if (!mailResponse.ok) {
-          if (mailResponse.status === 429) {
-            reject("Rate limited");
-          } else {
-            reject("Email sending failed");
-          }
-          return; // Exit the promise early if mail sending fails
-        }
-
-        // If email sending is successful, proceed to insert into Notion
-        const notionResponse = await fetch("/api/notion", {
+        const baseResponse = await fetch("/api/base", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -70,15 +53,17 @@ export default function Home() {
           body: JSON.stringify({ name, email }),
         });
 
-        if (!notionResponse.ok) {
-          if (notionResponse.status === 429) {
-            reject("Rate limited");
-          } else {
-            reject("Notion insertion failed");
-          }
-        } else {
-          resolve({ name });
+        if (!baseResponse.ok) {
+          const msg =
+            baseResponse.status === 400
+              ? "Base insertion failed"
+              : "Something went wrong";
+          reject(new Error(msg));
+          return;
         }
+
+        const data = await baseResponse.json().catch(() => ({}));
+        resolve(data);
       } catch (error) {
         reject(error);
       }
@@ -87,16 +72,15 @@ export default function Home() {
     toast.promise(promise, {
       loading: "Getting you on the waitlist... 🚀",
       success: (data) => {
+        console.log("Data inserted into waitlist", data);
         setName("");
         setEmail("");
         return "Thank you for joining the waitlist 🎉";
       },
       error: (error) => {
-        if (error === "Rate limited") {
-          return "You're doing that too much. Please try again later";
-        } else if (error === "Email sending failed") {
-          return "Failed to send email. Please try again 😢.";
-        } else if (error === "Notion insertion failed") {
+        console.error("Error inserting into waitlist", error);
+        const message = error instanceof Error ? error.message : String(error);
+        if (message === "Base insertion failed") {
           return "Failed to save your details. Please try again 😢.";
         }
         return "An error occurred. Please try again 😢.";
@@ -104,6 +88,7 @@ export default function Home() {
     });
 
     promise.finally(() => {
+      console.log("Promise finally");
       setLoading(false);
     });
   };
@@ -115,14 +100,14 @@ export default function Home() {
 
         <CTA />
 
-        <Form
-          name={name}
-          email={email}
-          handleNameChange={handleNameChange}
-          handleEmailChange={handleEmailChange}
-          handleSubmit={handleSubmit}
-          loading={loading}
-        />
+        <EnhancedButton
+          variant="expandIcon"
+          Icon={FaArrowRightLong}
+          iconPlacement="right"
+          className="mt-6"
+          onClick={() => setIsModalOpen(true)}>
+          Join waitlist
+        </EnhancedButton>
 
         <Logos />
       </section>
@@ -136,6 +121,33 @@ export default function Home() {
         color={"#F7FF9B"}
         refresh
       />
+
+      {isModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4"
+          onClick={() => setIsModalOpen(false)}>
+          <div
+            className="relative w-full max-w-md rounded-xl border border-zinc-800 bg-[#050509] p-6 shadow-xl"
+            onClick={(e) => e.stopPropagation()}>
+            <button
+              type="button"
+              aria-label="Close join waitlist modal"
+              className="absolute right-3 top-3 rounded-md p-1 text-zinc-400 transition hover:bg-zinc-800/70 hover:text-zinc-50"
+              onClick={() => setIsModalOpen(false)}>
+              ×
+            </button>
+
+            <Form
+              name={name}
+              email={email}
+              handleNameChange={handleNameChange}
+              handleEmailChange={handleEmailChange}
+              handleSubmit={handleSubmit}
+              loading={loading}
+            />
+          </div>
+        </div>
+      )}
     </main>
   );
 }
