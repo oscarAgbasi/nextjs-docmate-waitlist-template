@@ -7,9 +7,9 @@ import { Analytics } from "@vercel/analytics/react";
 const FigtreeFont = Figtree({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Next.js + Notion — Waitlist Template",
+  title: "Moko — Auto-Sync Documentation for Engineering Teams",
   description:
-    "A simple Next.js waitlist template with Notion as CMS and Resend to send emails created with React Email and Upstash Redis for rate limiting. Deployed on Vercel.",
+    "Moko is a platform that automatically syncs your documentation with your codebase, so you can always have the most up-to-date documentation.",
 };
 
 export default function RootLayout({
@@ -25,11 +25,11 @@ export default function RootLayout({
       <meta property="og:image:height" content="832" />
       <meta
         property="og:site_name"
-        content="Next.js + Notion — Waitlist Template"
+        content="Moko — Auto-Sync Documentation for Engineering Teams"
       />
       <meta
         property="og:url"
-        content="https://nextjs-notion-waitlist.vercel.app/"
+        content="https://usemoko.com/"
       />
       <meta name="twitter:image" content="/twitter-image.png" />
       <meta name="twitter:image:type" content="image/png" />
