@@ -72,7 +72,6 @@ export default function Home() {
     toast.promise(promise, {
       loading: "Getting you on the waitlist... 🚀",
       success: (data) => {
-        console.log("Data inserted into waitlist", data);
         setName("");
         setEmail("");
         return "Thank you for joining the waitlist 🎉";
@@ -88,7 +87,6 @@ export default function Home() {
     });
 
     promise.finally(() => {
-      console.log("Promise finally");
       setLoading(false);
     });
   };
